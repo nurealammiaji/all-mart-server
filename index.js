@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 const app = express();
 
@@ -40,6 +40,7 @@ async function run() {
     client.connect();
 
     const productsCollection = client.db("allMart").collection("products");
+    const checkoutsCollection = client.db("allMart").collection("checkouts");
     const ordersCollection = client.db("allMart").collection("orders");
 
     app.get("/products", async(req, res) => {
@@ -47,6 +48,12 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
     })
+
+    app.get("/totalProducts", async(req, res) => {
+      const products = await productsCollection.estimatedDocumentCount();
+      res.send({products});
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");

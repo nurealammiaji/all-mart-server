@@ -16,11 +16,11 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("All Mart Server");
+  res.send("All Mart Server");
 })
 
 app.listen(port, () => {
-    console.log(`All Mart Server is running on port: ${port}`);
+  console.log(`All Mart Server is running on port: ${port}`);
 })
 
 const uri = `mongodb+srv://${user}:${pass}@cluster0.31s3qjy.mongodb.net/?retryWrites=true&w=majority`;
@@ -43,15 +43,18 @@ async function run() {
     const checkoutsCollection = client.db("allMart").collection("checkouts");
     const ordersCollection = client.db("allMart").collection("orders");
 
-    app.get("/products", async(req, res) => {
-        const cursor = productsCollection.find();
-        const result = await cursor.toArray();
-        res.send(result);
+    app.get("/products", async (req, res) => {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 9;
+      const skip = (page - 1) * limit;
+      const cursor = productsCollection.find().skip(skip).limit(limit);
+      const result = await cursor.toArray();
+      res.send(result);
     })
 
-    app.get("/totalProducts", async(req, res) => {
-      const products = await productsCollection.estimatedDocumentCount();
-      res.send({products});
+    app.get("/totalProducts", async (req, res) => {
+      const total = await productsCollection.estimatedDocumentCount();
+      res.send({ total });
     })
 
     // Send a ping to confirm a successful connection

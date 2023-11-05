@@ -40,8 +40,6 @@ async function run() {
     client.connect();
 
     const productsCollection = client.db("allMart").collection("products");
-    const checkoutsCollection = client.db("allMart").collection("checkouts");
-    const ordersCollection = client.db("allMart").collection("orders");
 
     app.get("/products", async (req, res) => {
       const page = parseInt(req.query.page) || 1;
